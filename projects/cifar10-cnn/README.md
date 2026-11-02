@@ -1,3 +1,6 @@
+> Historical snapshot. The maintained standalone repository is
+> [mamadoufoune6-spec/cifar10-cnn-pytorch](https://github.com/mamadoufoune6-spec/cifar10-cnn-pytorch).
+
 # CIFAR-10 CNN learning exercise
 
 A small PyTorch image classifier with an end-to-end training, validation and

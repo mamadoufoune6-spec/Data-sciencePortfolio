@@ -1,3 +1,6 @@
+> Historical snapshot. The maintained standalone repository is
+> [mamadoufoune6-spec/kmnist-mlp-pytorch](https://github.com/mamadoufoune6-spec/kmnist-mlp-pytorch).
+
 # KMNIST MLP learning exercise
 
 A PyTorch multilayer perceptron for classifying 28 x 28 Kuzushiji-MNIST images.

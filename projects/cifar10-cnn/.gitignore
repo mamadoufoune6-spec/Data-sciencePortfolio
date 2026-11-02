@@ -1,0 +1,19 @@
+# Local environments and credentials
+.venv/
+venv/
+.env
+.env.*
+
+# Python caches
+__pycache__/
+*.py[cod]
+.pytest_cache/
+
+# Downloaded data and generated training artifacts
+data/
+outputs/
+checkpoints/
+runs/
+*.pt
+*.pth
+*.ckpt

@@ -1,74 +1,84 @@
 # CIFAR-10 CNN learning exercise
 
-This PyTorch exercise demonstrates a small image classifier, dataset loading,
-a reproducible training/validation split, and a validation helper. It is a
-learning project with an unfinished training workflow.
+A small PyTorch image classifier with an end-to-end training, validation and
+test workflow. Its training loop is adapted from Mamadou's existing KMNIST MLP
+exercise; the original CNN architecture and optimiser settings are preserved.
 
 ## Status and provenance
 
-**Work in progress.** A model, loss, optimiser and validation helper exist.
-There is no training loop, checkpoint workflow or trained-model evaluation in
-these files. See [PROVENANCE.md](PROVENANCE.md) for the existing source and
-Codex-assisted preparation. Earlier authorship and tutorial sources need review.
+The runnable learning workflow includes seeded data loading, epoch metrics,
+best/final checkpoints, loss/accuracy plots and final test evaluation.
+This is programming practice, not a novel architecture or a tuned benchmark.
+See [PROVENANCE.md](PROVENANCE.md) for Codex-assisted implementation details.
 
 ## Method
 
-- Dataset: CIFAR-10, 10 classes, RGB images of size 32 x 32.
-- Split: 45,000 training / 5,000 validation images from the training set;
-  10,000 separate test images. The split generator uses seed 42.
+- CIFAR-10: 10 classes, RGB images of size 32 x 32.
+- Split: 45,000 training / 5,000 validation / 10,000 test images. The split
+  generator uses seed 42; model initialisation and training shuffle use `--seed`.
 - Transform: tensor conversion and per-channel normalisation with mean 0.5
-  and standard deviation 0.5. No augmentation is implemented.
-- Model: 3-to-32 convolution, ReLU, 2x2 max pooling; 32-to-32 convolution,
+  and standard deviation 0.5. No augmentation.
+- Architecture: 3-to-32 convolution, ReLU, 2x2 max pooling; 32-to-32 convolution,
   ReLU, 2x2 max pooling; flatten 2,048 features; linear layer with 10 logits.
   Both convolutions use a 3x3 kernel and padding 1.
-- Configured objective: cross-entropy. Configured optimiser: SGD with learning
-  rate 0.1, momentum 0.9 and weight decay 0.0005. No optimiser steps are run.
-- `val_loader(...)` returns mean batch loss and classification accuracy in
-  percent. Mean batch loss weights batches equally, including a shorter last
-  batch; it is not an exact per-example mean in that case.
+- Cross-entropy; SGD with learning rate 0.1, momentum 0.9 and weight decay 0.0005.
+- The shared trainer records example-weighted loss/accuracy, including the
+  shorter last batch. The original `val_loader` helper remains available but
+  is not used by the shared trainer; it averages batch losses instead.
+- Select `best.pt` by lowest validation cross-entropy (earliest exact tie).
+  After training, reload it and evaluate the held-out test set once.
 
 ## Reproduce
 
-Use Python 3.10 or newer with compatible PyTorch and torchvision installations.
-For a fresh CPU environment, from this directory in PowerShell:
+From the **repository root**, using Python 3.10+ and compatible dependencies:
 
 ```powershell
 python -m venv .venv
-.\.venv\Scripts\python.exe -m pip install -r requirements.txt
-.\.venv\Scripts\python.exe cifar10_cnn.py
+.\.venv\Scripts\python.exe -m pip install -r projects/requirements.txt
+.\.venv\Scripts\python.exe projects/train_classifier.py --dataset cifar10 --epochs 20 --seed 42
 ```
 
-For an existing compatible environment, run `python cifar10_cnn.py`. It selects
-CUDA when available, otherwise CPU. CUDA requires a compatible PyTorch build.
-The dependency list is minimal, not a locked environment. Preparation checks
-used Python 3.12, torch 2.14.0+cu126 and torchvision 0.29.0+cu126.
+CUDA is selected when available; `--device cpu` forces CPU. CUDA needs a
+compatible PyTorch build. The dataset downloads to `./data` if necessary;
+`--data-root PATH --no-download` uses an existing cache without network access.
+The dependency file is minimal rather than a fully locked environment.
 
-The script downloads CIFAR-10 into `./data` if necessary, then runs a single
-forward-pass check. An initial download needs network access. Expected shapes
-for the default batch are images `(64, 3, 32, 32)`, labels `(64,)`, and logits
-`(64, 10)`; dataset sizes should print as `45000 5000 10000`.
-It does not train, save weights, write graphs or report trained accuracy.
-Dataset information: https://www.cs.toronto.edu/~kriz/cifar.html
-
-A model-only check without downloading data:
+Artifacts go to `outputs/cifar10-seed42/`: `metrics.json`, `curves.png`,
+`best.pt` and `last.pt`. Use `--output-dir PATH` for another run; a nonempty
+output directory is rejected to preserve existing results. Weights and data
+are ignored by Git. Checkpoints include model/optimiser state, epoch and seed;
+automatic resume is not implemented.
 
 ```powershell
-python -B -c "import torch; from cifar10_cnn import model, device; x = torch.zeros(2, 3, 32, 32, device=device); model.eval(); y = model(x); assert y.shape == (2, 10); assert torch.isfinite(y).all(); print('Model shape check passed:', tuple(y.shape))"
+python -B -m unittest discover -s tests -v
 ```
 
-See [VALIDATION.md](VALIDATION.md) for the checks actually run during preparation.
+Dataset source: https://www.cs.toronto.edu/~kriz/cifar.html
 
-## Results
+## Results and limitations
 
-**Not yet evaluated.** No training history, loss curves or trained validation
-or test accuracy has been verified. A synthetic-input shape check establishes
-execution and output shape only.
+The measured 20-epoch, seed-42 baseline selected epoch 11 by validation loss:
 
-## Limitations and next steps
+| Metric | Measured result |
+|---|---:|
+| Validation accuracy at selected epoch | 50.22% |
+| Held-out test accuracy (10,000 images) | 50.43% |
+| Held-out test cross-entropy | 1.4374 |
+| Trainable parameters | 30,634 |
 
-The split is seeded, but model initialisation and training-loader order are
-not fixed. Training and final evaluation remain to be implemented or recovered
-from an existing version. Confirm sources and authorship, then add a documented
-training workflow, run it, and record its actual metrics and conditions.
+Full history and conditions: [metrics.json](results/metrics.json).
 
-No licence has been selected; the containing portfolio currently has no licence.
+![Measured training and validation curves](results/curves.png)
+
+The earlier five-epoch workflow check is preserved in
+[five_epoch_check.json](results/five_epoch_check.json): 43.45% test accuracy.
+Its first five training/validation epochs match the longer run exactly.
+Validation is noisy; no tuning or claim of convergence is implied.
+See [VALIDATION.md](VALIDATION.md) for the exact checks and run conditions.
+Only one seed is used for the initial baseline. Training accuracy is measured
+while parameters change within an epoch. Deterministic settings improve repeatability
+on the recorded environment; identical results across hardware/versions are not
+guaranteed. No hyperparameter sweep or architectural comparison is claimed.
+
+Earlier source attribution still needs Mamadou's review. No licence has been
+selected for the containing portfolio.

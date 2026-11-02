@@ -1,4 +1,4 @@
-"""CIFAR-10 CNN and validation helper; no training loop is implemented yet."""
+"""Original CIFAR-10 model; use ../train_classifier.py for training."""
 
 import torch
 import torch.nn as nn

@@ -1,18 +1,20 @@
-# Mamadou Foune Barry ? selected programming projects
+# Mamadou Foune Barry — selected work
 
-| Project | What it demonstrates | Evidence |
-|---|---|---|
-| [CIFAR-10 CNN in PyTorch](https://github.com/mamadoufoune6-spec/cifar10-cnn-pytorch) | Convolutional image classification, training/validation, checkpoint selection | 20 epochs, seed 42; 50.43% held-out test accuracy |
-| [KMNIST MLP in PyTorch](https://github.com/mamadoufoune6-spec/kmnist-mlp-pytorch) | MLP implementation, autograd, reproducible data splits and evaluation | 20 epochs, seed 42; 65.34% held-out test accuracy |
+## Research
 
-Each standalone repository has its own README, runnable training script, MIT
-licence, third-party notices, tests, measured metrics and learning curves.
-These are learning baselines, not tuned research benchmarks; AI-assisted
-workflow changes are documented in each repository's provenance file.
+- **[Belief-space source localisation](https://github.com/mamadoufoune6-spec/belief-space-source-localisation):** Bayesian radio-source estimation and search, runnable examples and tests; dual-control variants remain experimental.
+- **[PHANGS–ALMA reconstruction report](https://github.com/mamadoufoune6-spec/radio-astronomy-reconstruction-report):** October 2026 technical manuscript with methods, results and figures. The implementation remains private.
+- **[Functional ambiguity in inverse problems](https://github.com/mamadoufoune6-spec/inverse-problems-functional-ambiguity):** September 2026 preliminary mathematical report.
 
-The projects above are the maintained versions. Earlier copies in `projects/`
-remain as historical snapshots so existing links and source history are kept.
-[Early notebooks](legacy-notebooks/README.md) are archived and unfeatured.
+## Programming evidence
 
-This index does not grant a blanket licence to historical notebooks or other
-third-party material. Code licences live in the individual maintained repos.
+- [CIFAR-10 CNN in PyTorch](https://github.com/mamadoufoune6-spec/cifar10-cnn-pytorch)
+- [KMNIST MLP in PyTorch](https://github.com/mamadoufoune6-spec/kmnist-mlp-pytorch)
+
+The maintained projects document their scope, results, limitations and provenance.
+Research reports are not presented as peer-reviewed publications.
+
+Earlier code copies in `projects/` and [early notebooks](legacy-notebooks/README.md)
+remain historical, unfeatured material. Their files and history are preserved.
+This index does not grant a blanket licence to that mixed historical material;
+licences or manuscript rights are stated in the individual repositories.
